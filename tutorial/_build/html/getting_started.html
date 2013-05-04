@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started &mdash; SilkJS 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SilkJS 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Installing SilkJS" href="installing_silkjs.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="installing_silkjs.html" title="Installing SilkJS"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">SilkJS 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<span id="id1"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p><em>This guide assumes you have already installed SilkJS.</em></p>
+<p>The Install.js script created (or updated) 3 files in /usr/local/bin; /usr/local/bin should be on your path. The three files are httpd-silk.js, silkjs, and systat.js. The systat.js program only works on Linux systems.</p>
+<div class="section" id="scripting-with-silkjs">
+<span id="id2"></span><h2>Scripting with SilkJS<a class="headerlink" href="#scripting-with-silkjs" title="Permalink to this headline">¶</a></h2>
+<p>All of the programs in this guide can be found in your SilkJS/walkthrough/scripting directory. You will want to cd there in your terminal program to follow allong.</p>
+<p>SilkJS is a Unix command-line tool that loads and runs the first JavaScript file on the command line. For example:</p>
+<div class="highlight-python"><pre>silkjs hello.js</pre>
+</div>
+<p>runs /usr/local/bin/sikjs and loads and runs the hello.js script in the current direcory. Let&#8217;s try it out by creating a hello.js file with the following contents:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s">&#39;hello, world</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We run the program and see:</p>
+<div class="highlight-python"><pre>$ silkjs hello.js
+hello, world
+$</pre>
+</div>
+<p>The upshot of this behavior is that you can use the load/compile/run phase to load up your API libraries and then your main() function will be the entry point to your program.</p>
+<div class="section" id="builtin-functionality">
+<span id="id3"></span><h3>Builtin functionality<a class="headerlink" href="#builtin-functionality" title="Permalink to this headline">¶</a></h3>
+<p>SilkJS comes with a decent set of builtin functionality, accessed via the global builtin namespace. This builtin functionality includes access to the console, file system, networking, processes, and libraries like ncurses, gd2, and mysql. The builtin.console module provides console.log() and console.error() methods. We can see how to access these with the following program, console.js:</p>
+<div class="highlight-python"><pre>var console = builtin.console;
+
+function main() {
+console.log('hello, world');
+}</pre>
+</div>
+<p>We run the program and see:</p>
+<div class="highlight-python"><pre>$ silkjs console.js
+hello, world
+$</pre>
+</div>
+<p>A very useful builtin is print_r. This is a function that dumps an arbitrary JavaScript variable, be it an object or array etc, and formats it as a string. We can see it in action with print_r.js:</p>
+<div class="highlight-python"><pre>var o = {
+          key1: 'value1',
+          key2: 'value2',
+          key3: [ 1,2,3],
+          key4: { a: '1' b: 2, c: 3 }
+};
+
+var print_r = builtin.print_r;
+
+function main() {
+          println(print_r(o));
+}</pre>
+</div>
+<p>When we run it, we see:</p>
+<div class="highlight-python"><pre>$ silkjs print_r.js
+(object) :
+ [key1] : (string) value1
+ [key2] : (string) value2
+ [key3] : (array) :
+         [0] : (number) 1
+         [1] : (number) 2
+         [2] : (number) 3
+ [key4] : (object) :
+         [a] : (string) 1
+         [b] : (number) 2
+         [c] : (number) 3</pre>
+</div>
+</div>
+<div class="section" id="shebang">
+<span id="id4"></span><h3>SheBang!<a class="headerlink" href="#shebang" title="Permalink to this headline">¶</a></h3>
+<p>Shebang is a Unix term for the first line of shell scripts. These lines look something like #!/path/to/script. SilkJS supports shebang, too. For example, let&#8217;s look at shebang.js:</p>
+<div class="highlight-python"><pre>#!/usr/local/bin/silkjs
+
+function main() {
+          arguments.dump();
+}</pre>
+</div>
+<p>Notice the shebang on the first line? If we chmod the file to turn on the &#8216;X&#8217; bit, it will execute like
+any other shell script or Unix command:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">code</span><span class="p">(</span><span class="s">&#39;chmod 700 shebang.js&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we can run it directly:</p>
+<div class="highlight-python"><pre>$ ./shebang.js a b c
+(array) :
+ [0] : (string) a
+ [1] : (string) b
+ [2] : (string) c</pre>
+</div>
+</div>
+<div class="section" id="loading-scripts">
+<span id="id5"></span><h3>Loading Scripts<a class="headerlink" href="#loading-scripts" title="Permalink to this headline">¶</a></h3>
+<p>The examples so far have only involved a single script. Now let&#8217;s explore how we can load additional scripts and call the functions provided by those. SilkJS features both include() and require() for loading scripts.</p>
+<div class="section" id="include">
+<span id="id6"></span><h4>include()<a class="headerlink" href="#include" title="Permalink to this headline">¶</a></h4>
+<p>There is a builtin.include() method that is overloaded by the include() implementation in JavaScript in the builtin/include.js file in the SilkJS sources. The include() function will load, compile, and run a file from the file system. <em>This happens each time you include() the same file, even.</em></p>
+<p>To illustrate include() functionality, there are two files involved in the next example. First is test.inc.js:</p>
+<div class="highlight-python"><pre>println('including test.inc.js');
+
+function included_function() {
+          println('included');
+}</pre>
+</div>
+<p>And include_test.js:</p>
+<div class="highlight-python"><pre>include('test.inc.js');
+include('test.inc.js');
+
+function main() {
+          included_function();
+}</pre>
+</div>
+<p>Notice we include test.inc.js twice. Let&#8217;s see what happens when we run it:</p>
+<div class="highlight-python"><pre>$ silkjs ./include_test.js
+including test.inc.js
+including test.inc.js
+included</pre>
+</div>
+<p>The include() function acts very much like &lt;script&gt; tags do in client side JavaScript.</p>
+<p>Another interesting aspect of include() is that it will see a .coffee extension on a file and compile CoffeeScript to JavaScript before running it.</p>
+</div>
+<div class="section" id="require">
+<span id="id7"></span><h4>require()<a class="headerlink" href="#require" title="Permalink to this headline">¶</a></h4>
+<p>An alternate means of loading your API into SilkJS is the require() function. SilkJS implements the CommonJS Require/1.1 specification. The require() function differs from include() in a few key ways.</p>
+<p>First, the file is loaded and compiled and run in a sort of sandbox. The modules you require() may not modify any global variables.</p>
+<p>Second, there is a predefined &#8220;exports&#8221; variable in module code. The module code sets the properties of exports to whatever it wants to make available to the code that calls require().</p>
+<div class="highlight-python"><pre>$ cat test2.mod.js
+println('loading module test2.mod.js');
+
+function a() {
+          println('a');
+}
+
+// will not be available to caller of require()
+function b() {
+          println('private b');
+}
+
+function c() {
+          b();    // is available privately to me
+          println('c');
+}
+
+// export these
+exports.a = a;
+exports.c = c;</pre>
+</div>
+<div class="highlight-python"><pre>$ cat rtest2.js
+var mod = require('test2.mod.js');
+
+mod.dump();
+
+var c = require('test2.mod.js').c;
+c.dump();
+
+c();</pre>
+</div>
+<p>Third, require() has a concept of current directory when a module requires another module.</p>
+<p>Fourth, the SilkJS require() implementation does a special case for modules named &#8220;builitin/something&#8221; - if there is a global.builtin.something, that builtin (C++, native) module is loaded. <em>This is the preferred way to access the global.builtin namespace!.</em></p>
+<p><em>If a module&#8217;s file is modified on disk, it will be reloaded and compiled the next time require() is called for it.</em></p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#scripting-with-silkjs">Scripting with SilkJS</a><ul>
+<li><a class="reference internal" href="#builtin-functionality">Builtin functionality</a></li>
+<li><a class="reference internal" href="#shebang">SheBang!</a></li>
+<li><a class="reference internal" href="#loading-scripts">Loading Scripts</a><ul>
+<li><a class="reference internal" href="#include">include()</a></li>
+<li><a class="reference internal" href="#require">require()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installing_silkjs.html"
+                        title="previous chapter">Installing SilkJS</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/getting_started.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="installing_silkjs.html" title="Installing SilkJS"
+             >previous</a> |</li>
+        <li><a href="index.html">SilkJS 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Stephanie Smith.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

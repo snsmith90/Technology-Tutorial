@@ -1,0 +1,200 @@
+.. _getting_started:
+
+
+***************
+Getting Started
+***************
+
+*This guide assumes you have already installed SilkJS.*
+
+The Install.js script created (or updated) 3 files in /usr/local/bin; /usr/local/bin should be on your path. The three files are httpd-silk.js, silkjs, and systat.js. The systat.js program only works on Linux systems.
+
+.. _scripting_with_silkjs:
+
+Scripting with SilkJS
+=====================
+
+All of the programs in this guide can be found in your SilkJS/walkthrough/scripting directory. You will want to cd there in your terminal program to follow allong.
+
+SilkJS is a Unix command-line tool that loads and runs the first JavaScript file on the command line. For example::
+
+	silkjs hello.js
+
+runs /usr/local/bin/sikjs and loads and runs the hello.js script in the current direcory. Let's try it out by creating a hello.js file with the following contents::
+
+	print('hello, world\n');
+
+We run the program and see::
+
+	$ silkjs hello.js
+	hello, world
+	$
+
+The upshot of this behavior is that you can use the load/compile/run phase to load up your API libraries and then your main() function will be the entry point to your program.
+
+.. _builtin_functionality:
+
+Builtin functionality
+---------------------
+
+SilkJS comes with a decent set of builtin functionality, accessed via the global builtin namespace. This builtin functionality includes access to the console, file system, networking, processes, and libraries like ncurses, gd2, and mysql. The builtin.console module provides console.log() and console.error() methods. We can see how to access these with the following program, console.js::
+
+	var console = builtin.console;
+
+	function main() {
+  	console.log('hello, world');
+	}
+
+We run the program and see::
+
+	$ silkjs console.js
+	hello, world
+	$
+
+A very useful builtin is print_r. This is a function that dumps an arbitrary JavaScript variable, be it an object or array etc, and formats it as a string. We can see it in action with print_r.js::
+
+	var o = {
+		  key1: 'value1',
+		  key2: 'value2',
+		  key3: [ 1,2,3],
+		  key4: { a: '1' b: 2, c: 3 }
+	};
+
+	var print_r = builtin.print_r;
+
+	function main() {
+		  println(print_r(o));
+	}
+
+When we run it, we see::
+
+	$ silkjs print_r.js
+	(object) :
+	 [key1] : (string) value1
+	 [key2] : (string) value2
+	 [key3] : (array) :
+		 [0] : (number) 1
+		 [1] : (number) 2
+		 [2] : (number) 3
+	 [key4] : (object) :
+		 [a] : (string) 1
+		 [b] : (number) 2
+		 [c] : (number) 3
+
+.. _shebang:
+
+SheBang!
+--------
+
+Shebang is a Unix term for the first line of shell scripts. These lines look something like #!/path/to/script. SilkJS supports shebang, too. For example, let's look at shebang.js::
+
+	#!/usr/local/bin/silkjs
+
+	function main() {
+		  arguments.dump();
+	}
+
+Notice the shebang on the first line? If we chmod the file to turn on the 'X' bit, it will execute like
+any other shell script or Unix command::
+
+	code('chmod 700 shebang.js')
+
+Now we can run it directly::
+
+	$ ./shebang.js a b c
+	(array) :
+	 [0] : (string) a
+	 [1] : (string) b
+	 [2] : (string) c
+
+.. _loading_scripts:
+
+Loading Scripts
+---------------
+
+The examples so far have only involved a single script. Now let's explore how we can load additional scripts and call the functions provided by those. SilkJS features both include() and require() for loading scripts.
+
+.. _include:
+
+include()
+'''''''''
+
+There is a builtin.include() method that is overloaded by the include() implementation in JavaScript in the builtin/include.js file in the SilkJS sources. The include() function will load, compile, and run a file from the file system. *This happens each time you include() the same file, even.*
+
+To illustrate include() functionality, there are two files involved in the next example. First is test.inc.js::
+
+	println('including test.inc.js');
+
+	function included_function() {
+		  println('included');
+	}
+
+And include_test.js::
+
+	include('test.inc.js');
+	include('test.inc.js');
+
+	function main() {
+		  included_function();
+	}
+
+Notice we include test.inc.js twice. Let's see what happens when we run it::
+
+	$ silkjs ./include_test.js
+	including test.inc.js
+	including test.inc.js
+	included
+
+The include() function acts very much like <script> tags do in client side JavaScript.
+
+Another interesting aspect of include() is that it will see a .coffee extension on a file and compile CoffeeScript to JavaScript before running it. 
+
+.. _require:
+
+require()
+'''''''''
+
+An alternate means of loading your API into SilkJS is the require() function. SilkJS implements the CommonJS Require/1.1 specification. The require() function differs from include() in a few key ways.
+
+First, the file is loaded and compiled and run in a sort of sandbox. The modules you require() may not modify any global variables.
+
+Second, there is a predefined "exports" variable in module code. The module code sets the properties of exports to whatever it wants to make available to the code that calls require().
+
+	$ cat test2.mod.js
+	println('loading module test2.mod.js');
+
+	function a() {
+		  println('a');
+	}
+
+	// will not be available to caller of require()
+	function b() {
+		  println('private b');
+	}
+
+	function c() {
+		  b();    // is available privately to me
+		  println('c');
+	}
+
+	// export these
+	exports.a = a;
+	exports.c = c;
+
+:
+
+	$ cat rtest2.js
+	var mod = require('test2.mod.js');
+
+	mod.dump();
+
+	var c = require('test2.mod.js').c;
+	c.dump();
+
+	c();
+
+Third, require() has a concept of current directory when a module requires another module. 
+
+Fourth, the SilkJS require() implementation does a special case for modules named "builitin/something" - if there is a global.builtin.something, that builtin (C++, native) module is loaded. *This is the preferred way to access the global.builtin namespace!.*
+
+*If a module's file is modified on disk, it will be reloaded and compiled the next time require() is called for it.*

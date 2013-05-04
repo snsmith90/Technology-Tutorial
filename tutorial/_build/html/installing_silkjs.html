@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installing SilkJS &mdash; SilkJS 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SilkJS 1.0 documentation" href="index.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" />
+    <link rel="prev" title="Welcome to SilkJS’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to SilkJS’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">SilkJS 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installing-silkjs">
+<span id="id1"></span><h1>Installing SilkJS<a class="headerlink" href="#installing-silkjs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ubuntu-instructions">
+<span id="id2"></span><h2>Ubuntu Instructions<a class="headerlink" href="#ubuntu-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prequisites">
+<h3>Prequisites<a class="headerlink" href="#prequisites" title="Permalink to this headline">¶</a></h3>
+<p>First the essentials:</p>
+<div class="highlight-python"><pre>sudo apt-get install build-essential subversion git</pre>
+</div>
+<p>General purpose libraries:</p>
+<div class="highlight-python"><pre>sudo apt-get install libmm-dev libssl-dev libgd2-xpm-dev libncurses5-dev libcurl4-openssl-dev libssh2-1-dev libcairo2-dev</pre>
+</div>
+<p>Database interface libraries:</p>
+<div class="highlight-python"><pre>sudo apt-get install libmysqlclient-dev libsqlite3-dev libmemcached-dev</pre>
+</div>
+<p>The apache2-util package installs the ab program, which can be used to benchmark SilkJS and other HTTP servers:</p>
+<div class="highlight-python"><pre>sudo apt-get install apache2-utils</pre>
+</div>
+</div>
+<div class="section" id="get-silkjs-from-github">
+<h3>Get SilkJS from GitHub<a class="headerlink" href="#get-silkjs-from-github" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>mkdir src</pre>
+</div>
+<div class="highlight-python"><pre>cd src</pre>
+</div>
+<div class="highlight-python"><pre>git clone https://github.com/mschwartz/SilkJS.git SilkJS</pre>
+</div>
+</div>
+<div class="section" id="build-and-test">
+<h3>Build and Test<a class="headerlink" href="#build-and-test" title="Permalink to this headline">¶</a></h3>
+<p>SilkJS should now build:</p>
+<div class="highlight-python"><pre>cd SilkJS</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">make</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>make install</pre>
+</div>
+<p>To see it works:</p>
+<div class="highlight-python"><pre>./silkjs httpd/main.js</pre>
+</div>
+<p>=&gt; Point your browser at <a class="reference external" href="http://localhost:9090">http://localhost:9090</a></p>
+</div>
+</div>
+<div class="section" id="osx-instructions">
+<span id="id3"></span><h2>OSX Instructions<a class="headerlink" href="#osx-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-xcode">
+<h3>Install XCode<a class="headerlink" href="#install-xcode" title="Permalink to this headline">¶</a></h3>
+<p>Install from the App Store.</p>
+</div>
+<div class="section" id="install-subversion">
+<h3>Install SubVersion<a class="headerlink" href="#install-subversion" title="Permalink to this headline">¶</a></h3>
+<p>Install the command line binary version of SubVersion from this page:
+<a class="reference external" href="http://www.wandisco.com/subversion/download#osx">http://www.wandisco.com/subversion/download#osx</a></p>
+<p><em>Make sure to edit your ~/.profile to include this line at the end:</em></p>
+<blockquote>
+<div>export PATH=/opt/subversion/bin:$PATH</div></blockquote>
+<p>=&gt; <em>Close and open your shell window again.</em></p>
+</div>
+<div class="section" id="install-scons">
+<h3>Install scons<a class="headerlink" href="#install-scons" title="Permalink to this headline">¶</a></h3>
+<p>scons is the only way to build x64 versions of v8.</p>
+<p>Download scons-2.1.0.tar.gz from <a class="reference external" href="http://scons.org">http://scons.org</a> to your ~/src directory. Then in your shell window:</p>
+<div class="highlight-python"><pre>tar xzvfp scons-2.1.0.tar.gz</pre>
+</div>
+<div class="highlight-python"><pre>cd scons-2.1.0</pre>
+</div>
+<div class="highlight-python"><pre>sudo python setup.py install</pre>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Get SilkJS from GitHub<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>mkdir src</pre>
+</div>
+<div class="highlight-python"><pre>cd src</pre>
+</div>
+<div class="highlight-python"><pre>git clone https://github.com/mschwartz/SilkJS.git SilkJS</pre>
+</div>
+</div>
+<div class="section" id="id5">
+<h3>Build and Test<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>SilkJS should now build:</p>
+<div class="highlight-python"><pre>cd SilkJS</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">make</span>
+</pre></div>
+</div>
+<div class="highlight-python"><pre>make install</pre>
+</div>
+<p>To see it works:</p>
+<div class="highlight-python"><pre>./silkjs httpd/main.js</pre>
+</div>
+<p>=&gt; Point your browser at <a class="reference external" href="http://localhost:9090">http://localhost:9090</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing SilkJS</a><ul>
+<li><a class="reference internal" href="#ubuntu-instructions">Ubuntu Instructions</a><ul>
+<li><a class="reference internal" href="#prequisites">Prequisites</a></li>
+<li><a class="reference internal" href="#get-silkjs-from-github">Get SilkJS from GitHub</a></li>
+<li><a class="reference internal" href="#build-and-test">Build and Test</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#osx-instructions">OSX Instructions</a><ul>
+<li><a class="reference internal" href="#install-xcode">Install XCode</a></li>
+<li><a class="reference internal" href="#install-subversion">Install SubVersion</a></li>
+<li><a class="reference internal" href="#install-scons">Install scons</a></li>
+<li><a class="reference internal" href="#id4">Get SilkJS from GitHub</a></li>
+<li><a class="reference internal" href="#id5">Build and Test</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to SilkJS&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting Started</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/installing_silkjs.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to SilkJS’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">SilkJS 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Stephanie Smith.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

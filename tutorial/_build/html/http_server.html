@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTTP Server &mdash; SilkJS 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SilkJS 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">SilkJS 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="http-server">
+<span id="id1"></span><h1>HTTP Server<a class="headerlink" href="#http-server" title="Permalink to this headline">¶</a></h1>
+<p>SilkJS comes with an HTTP server that is written almost entirely in JavaScript using the SilkJS libraries and modules. The HTTP server can serve both static and dynamic content, and is very fast. This walkthrough will get you started at building WWW applications using the SilkJS HTTP server.</p>
+<div class="section" id="setting-up-an-application">
+<span id="id2"></span><h2>Setting up an Application<a class="headerlink" href="#setting-up-an-application" title="Permalink to this headline">¶</a></h2>
+<p>The server is started from the command line::</p>
+<div class="highlight-python"><pre>$ httpd-silk.js bootstrap.js</pre>
+</div>
+<p>The bootstrap.js program is a startup script that you will write to load your API into the server, as well as your &#8220;Servlet&#8221; request handler methods. The bootstrap is loaded and run before the server pre-forks the child processes. This means each child will have all the API libraries and request handlers you&#8217;ve loaded available to them.</p>
+<p>With that in mind, a good initial layout for your application might look something like this:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Application/</dt>
+<dd><ul class="first last simple">
+<li>bootstrap.js</li>
+<li>docroot/</li>
+<li>server/</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>You&#8217;ll name your Application directory as the name of the application or WWW site.</p>
+<p>The docroot directory will contain your static content and your dynamic &#8220;JSP&#8221; style pages. You might organize your docroot into a /css, a /js, an /img, directories. Your CSS files will be served by requests for /css/whatever.css, your JavaScript files will be served by requests for /js/whatever, and so on. Otherwise you&#8217;ll organize your static HTML and dynamic pages as you would for a server like Apache; if you make an about/ folder, a request for /about/ will attempt to serve the directory index page for the about/ folder.</p>
+<p>The HTTP server has a default Config object, which you can modify in your bootstrap.js script. The Config object contains the path to your documentRoot, the numChildren (number of children to pre-fork), MySQL connection parameters, and directoryIndex setup. The Config.directoryIndex member is an array of filenames that will be looked for if the request is for a directory. The defaults are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;index.jst&#39;</span><span class="p">,</span>
+<span class="s">&#39;index.coffee&#39;</span><span class="p">,</span>
+<span class="s">&#39;index.md&#39;</span><span class="p">,</span>
+<span class="s">&#39;index.html&#39;</span>
+</pre></div>
+</div>
+<p>Thus if a directory is requested by URI, an index.jst will be served if found, an index.coffee served if index.jst not found, etc. If none of the directoryIndex filenames are found, then a notFound error occurs.</p>
+<p>The server/ directory might contain any custom classes, modules, etc., that you might want to require() or include() for your application. This site, for example, has a templates/ folder which contains CoffeeScript snippets to generate the Header, Footer, Navigation, etc., and they are included by .coffee pages dynamically run upon request.</p>
+<div class="section" id="what-is-jst">
+<span id="jst"></span><h3>What is Jst?<a class="headerlink" href="#what-is-jst" title="Permalink to this headline">¶</a></h3>
+<p>It&#8217;s a lot like JSP (or PHP), except the language is JavaScript AND you can call any function of any class you&#8217;ve done include() on in your main program.</p>
+<div class="highlight-python"><pre>&lt;% var title = 'Hello from Jst'; %&gt;
+&lt;html&gt;
+        &lt;head&gt;
+          &lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+          &lt;h1&gt;Users&lt;/h1&gt;
+          &lt;ul&gt;
+
+&lt;% forEach(SQL.getDataRows('SELECT * FROM Users'), function(user) { %&gt;
+            &lt;li&gt;&lt;%= user.username %&gt;&lt;/li&gt;
+&lt;% } %&gt;
+
+          &lt;/ul&gt;
+        &lt;/body&gt;
+&lt;/html&gt;</pre>
+</div>
+<p>&lt;%
+// any JavaScript can go here
+%&gt;</p>
+<p>&lt;%= JavaScript expression %&gt;
+(emits result of the expression)</p>
+<div class="section" id="actions">
+<span id="id3"></span><h4>Actions<a class="headerlink" href="#actions" title="Permalink to this headline">¶</a></h4>
+<p>&#8220;Servlet&#8221; style requests are handled by &#8220;action&#8221; methods that are pre-loaded into the server. These are simply global methods that have names that end with _action(). If there is an action method for the first element of the requested URI, it is called; anything else in the URI is ignored, though the action method may examine the URI and perform appropriate logic in response. If the _action() method returns, the normal HTTP server processing will continue - the documentRoot is searched for a file that is served statically or JSP style.</p>
+<p>For example, if you have defined a global foo_action() method, and the requested URI is /foo, or /foo/, or /foo/anything/else/you/want, then foo_action() is called to handle the request. The same thing is true if you have a function bar_action() and the URI is /bar.</p>
+<p>A special case main_action() method may be defined. It handles the / request URI, but only that URI.</p>
+<p>If you want to have a function that is called on each request, you can set HttpChild.requestHandler to your own function; this function will be executed for each request, and if it returns, the normal HTTP server processing will occur. You might want to install a requestHandler to authenticate a user by cookie, each request.</p>
+<p>When a 404 occurs, the server will look for a notFound_action() method and will call that. If that function returns, the built-in 404 handler will execute.</p>
+</div>
+<div class="section" id="the-req-and-res-objects">
+<span id="req-and-res"></span><h4>The req and res Objects<a class="headerlink" href="#the-req-and-res-objects" title="Permalink to this headline">¶</a></h4>
+<p>There is a global req and global res object set up in the HTTP environment per request. These are available in the onRequest() method, in your action methods, and in your dynamic pages.</p>
+<p>The req object represents information about the request.</p>
+<p>It contains the headers, the host name requested, the port, the method (GET, PUT, etc.), the requested URI, the HTTP protocol, the client&#8217;s IP address, and the path to the script that is being executed (if it is not a script, this is meaningless).</p>
+<p>The req.data member contains the post variables, query_string variables, multi-part/mime variables, and cookies. It is a has of key/value pairs, where key is the name of the variable or cookie, and value is the value. For POST data that is a file upload, the value is a hash containing information about the file, and the base64 encoded file data.</p>
+<p>The res object represents information your code is preparing to send to the client as the response.</p>
+<p>You may set the response code to something other than 200 (OK) by setting res.status. You may set the content&#8217;s MIME type to something other than text/html by setting res.contentType.</p>
+<p>The res.data member is free for you to use for any purpose you choose. Think of it as a &#8220;global&#8221; variable you can pass to all functions, initialized per request.</p>
+<p>There are several functions provided by res that you will use heavily:</p>
+<ul class="simple">
+<li>res.stop() - call this to end your request processing without allowing the server to do its normal processing (e.g. serving static or dyanmic content from documentRoot).</li>
+<li>res.write(s) - write a string to the client; these are buffered until you call res.stop(), then sent.</li>
+<li>res.writeln(s) - same as res.write() but adds a newline to the output.</li>
+<li>res.sendFile(path) - sends a file of your choosing, does not return.</li>
+<li>res.redirect(uri) - send a 302 redirect to the specified URI.</li>
+<li>res.setHeader(key, value) - sets a header to be sent to the client.</li>
+<li>res.setCookie(key, value, expires, path, domain) - set a cookie, only key/value are required.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">HTTP Server</a><ul>
+<li><a class="reference internal" href="#setting-up-an-application">Setting up an Application</a><ul>
+<li><a class="reference internal" href="#what-is-jst">What is Jst?</a><ul>
+<li><a class="reference internal" href="#actions">Actions</a></li>
+<li><a class="reference internal" href="#the-req-and-res-objects">The req and res Objects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting Started</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/http_server.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             >previous</a> |</li>
+        <li><a href="index.html">SilkJS 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Stephanie Smith.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
