@@ -1,0 +1,9 @@
+Config.mysql = {
+	host: 'localhost'
+	user: 'sns',
+	passwd: '',
+	db: 'ext3'
+};
+
+Config.documentRoot = 'docroot';
+
